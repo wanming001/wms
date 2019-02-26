@@ -8,12 +8,14 @@ import com.sxt.sys.constants.SYSConstants;
 import com.sxt.sys.utils.DataView;
 import com.sxt.sys.utils.ResultObj;
 import com.sxt.sys.utils.TreeNode;
+import com.sxt.sys.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -28,8 +30,6 @@ public class InportController {
     @Autowired
     private InportService inportService;
 
-    @Autowired
-    private ProviderService providerService;
 
     /**
      * 查询进货单
@@ -49,6 +49,8 @@ public class InportController {
      */
     @RequestMapping("addInport")
     public ResultObj addInport(InportVo inportVo){
+        inportVo.setInporttime(new Date());
+        inportVo.setOperateperson(WebUtils.getCurrentUser().getLoginname());
         ResultObj resultObj = null;
         try {
             this.inportService.addInport(inportVo);
@@ -71,7 +73,7 @@ public class InportController {
     public ResultObj deleteInport(InportVo inportVo){
         ResultObj resultObj = null;
         try {
-            this.inportService.deleteInport(inportVo.getId());
+            this.inportService.deleteInport(inportVo);
             resultObj = new ResultObj(SYSConstants.OPERATE_SUCCESS_CODE,SYSConstants.OPERATE_DELETE_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,24 +84,6 @@ public class InportController {
     }
 
 
-    /**
-     * 修改进货单
-     * @param inportVo
-     * @return
-     */
-    @RequestMapping("updateInport")
-    public ResultObj updateInport(InportVo inportVo){
-        ResultObj resultObj = null;
-        try {
-            this.inportService.updateInport(inportVo);
-            resultObj = new ResultObj(SYSConstants.OPERATE_SUCCESS_CODE,SYSConstants.OPERATE_UPDATE_SUCCESS);
-        } catch (Exception e) {
-            e.printStackTrace();
-            resultObj = new ResultObj(SYSConstants.OPERATE_FAILURE_CODE,SYSConstants.OPERATE_UPDATE_FAILURE);
-        }
-
-        return resultObj;
-    }
 
 
 }

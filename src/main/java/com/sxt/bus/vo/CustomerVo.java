@@ -21,4 +21,5 @@ public class CustomerVo extends Customer {
     //分页大小
     private Integer limit;
 
+
 }

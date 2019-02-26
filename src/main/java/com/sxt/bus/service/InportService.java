@@ -1,5 +1,6 @@
 package com.sxt.bus.service;
 
+import com.sxt.bus.domain.Inport;
 import com.sxt.bus.vo.InportVo;
 import com.sxt.sys.utils.DataView;
 
@@ -31,9 +32,9 @@ public interface InportService {
 
     /**
      * 删除
-     * @param id
+     * @param inportVo
      */
-    void deleteInport(Integer id);
+    void deleteInport(InportVo inportVo);
 
 
 }

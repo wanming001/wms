@@ -32,4 +32,7 @@ public class InportVo extends Inport {
     //结束时间
     private Date endTime;
 
+    //商品规格
+    private String size;
+
 }

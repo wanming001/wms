@@ -2,6 +2,8 @@ package com.sxt.bus.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sxt.bus.domain.Goods;
+import com.sxt.bus.mapper.GoodsMapper;
 import com.sxt.bus.mapper.InportMapper;
 import com.sxt.bus.service.InportService;
 import com.sxt.bus.vo.InportVo;
@@ -21,6 +23,9 @@ public class InportServiceImpl implements InportService {
 
     @Autowired
     private InportMapper inportMapper;
+
+    @Autowired
+    private GoodsMapper goodsMapper;
     /**
      * 模糊加分页
      *
@@ -49,6 +54,10 @@ public class InportServiceImpl implements InportService {
      */
     @Override
     public void addInport(InportVo inportVo) {
+        //添加商品的库存
+        Goods goods = this.goodsMapper.selectByPrimaryKey(inportVo.getGoodsid());
+        goods.setNumber(goods.getNumber()+inportVo.getNumber());
+        this.goodsMapper.updateByPrimaryKeySelective(goods);
         this.inportMapper.insertSelective(inportVo);
     }
 
@@ -65,10 +74,15 @@ public class InportServiceImpl implements InportService {
     /**
      * 删除
      *
-     * @param id
+     * @param inportVo
      */
     @Override
-    public void deleteInport(Integer id) {
-        this.inportMapper.deleteByPrimaryKey(id);
+    public void deleteInport(InportVo inportVo) {
+        //先及修改商品库存
+        Goods goods = this.goodsMapper.selectByPrimaryKey(inportVo.getGoodsid());
+        goods.setNumber(goods.getNumber()-inportVo.getNumber());
+        this.goodsMapper.updateByPrimaryKeySelective(goods);
+        //再删除
+        this.inportMapper.deleteByPrimaryKey(inportVo.getId());
     }
 }

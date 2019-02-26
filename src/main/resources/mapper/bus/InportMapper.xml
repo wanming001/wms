@@ -25,13 +25,13 @@
 
     <!--查询-->
     <select id="queryAllInport" resultType="com.sxt.bus.vo.InportVo">
-      select t1.*,t2.goodsname,t3.providername from bus_inport t1
+      select t1.*,t2.goodsname,t2.size,t3.providername from bus_inport t1
         INNER JOIN bus_goods t2
         INNER JOIN bus_provider t3
         on (t1.goodsid = t2.id and t1.providerid = t3.id)
         <where>
             <if test="providerid!=null">
-                and providerid = #{providerid}
+                and t1.providerid = #{providerid}
             </if>
             <if test="goodsname!=null and goodsname!=''">
                 and t2.goodsname like "%"#{goodsname}"%"

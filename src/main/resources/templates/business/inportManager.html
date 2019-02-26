@@ -18,7 +18,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">供应商选择:</label>
             <div class="layui-input-inline">
-                <select name="providerid" id="providerName"></select>
+                <select name="providerid" id="providerName" ></select>
             </div>
         </div>
         <div class="layui-inline">
@@ -75,7 +75,7 @@
             <div class="layui-inline">
                 <label class="layui-form-label">选择供应商:</label>
                 <div class="layui-input-inline">
-                    <select name="providerid" lay-verify="required" id="providerid" style="width: 350px">
+                    <select name="providerid" lay-verify="required" id="providerid" lay-filter="clickProvoder" style="width: 350px">
                     </select>
                 </div>
                 <div class="layui-inline">
@@ -92,7 +92,7 @@
             <div class="layui-inline">
                 <label class="layui-form-label">进货数量:</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="number" autocomplete="off" class="layui-input" style="width: 350px">
+                    <input type="text" name="number" lay-verify="required" autocomplete="off" class="layui-input" style="width: 350px">
                 </div>
             </div>
         </div>
@@ -100,21 +100,21 @@
             <div class="layui-inline">
                 <label class="layui-form-label">进货价格:</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="inportprice" autocomplete="off" class="layui-input" style="width: 350px">
+                    <input type="text" name="inportprice" lay-verify="required" autocomplete="off" class="layui-input" style="width: 350px">
                 </div>
             </div>
         </div>
         <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">支持类型:</label>
-                <div class="layui-input-inline">
-                    <input type="checkbox" name="paytype" value="微信" title="微信" >
-                    <input type="checkbox" name="paytype" value="支付宝" title="支付宝">
-                    <input type="checkbox" name="paytype" value="银联" title="银联">
 
+                <label class="layui-form-label">支持类型:</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="paytype" value="微信" title="微信" >
+                    <input type="radio" name="paytype" value="支付宝" title="支付宝">
+                    <input type="radio" name="paytype" value="银联" title="银联">
                 </div>
-            </div>
+
         </div>
+
         <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">进货备注:</label>
@@ -166,9 +166,35 @@
             $.each(result,function (index, obj) {
                 html+="<option value='"+obj.id+"'>"+obj.name+"</option>";
             });
+            //初始还查询下拉框
             $("#providerid").html(html);
+            //初始化添加表单下拉框
             $("#providerName").html(html);
+
             form.render("select");
+        });
+
+        //监听下拉框事件
+        form.on('select(clickProvoder)', function(data){
+           // console.log(data.elem); //得到select原始DOM对象
+           // console.log(data.value); //得到被选中的值
+           // console.log(data.othis); //得到美化后的DOM对象
+
+            //根据选中的值异步加载该供应商下的所有商品
+            var html = "";
+            $.post('/goods/loadAllGoodsByProviderId',{providerid:data.value},function (result) {
+               // console.log(result);
+                if(result.length==0){
+                    html+="<option value=''>该商家下暂无商品,敬请期待！！！</option>";
+
+                }else {
+                   $.each(result,function (index, obj) {
+                   html+="<option value='"+obj.id+"'>"+obj.goodsname+"["+obj.size+"]"+"</option>";
+                    });
+                }
+                $("#goodsid").html(html);
+                form.render("select");
+            });
         });
 
 
@@ -184,30 +210,18 @@
             , text:{none:"<font color='red'>查询无数据</font>"}
             , defaultToolbar: ['print', 'filter']
             , cols: [ [
-                {type: 'checkbox', width: 80}
-                , {field: 'id', width: 80, align: 'center', title: '进货单ID'}
-                , {field: 'inportname', width: 100, align: 'center', title: '进货单名称'}
-                , {field: 'providerName', width: 150, align: 'center', title: '供应商名称'}
-                , {field: 'produceplace', align: 'center', title: '进货单产地'}
-                , {field: 'size', align: 'center', title: '规格'}
-                , {field: 'inportpackage', align: 'center', title: '包装类型'}
-                , {field: 'productcode', align: 'center', title: '进货单批号'}
-                , {field: 'promitcode', align: 'center', title: '比准文号'}
-                , {field: 'price', align: 'center', title: '市场参考价'}
-                , {
-                    field: 'inportimg', align: 'center', title: '进货单图片', templet: function (d) {
-                        return '<img src="/file/downloadFile?inportimg=' + d.inportimg + '">'
-                    }
-                }
-                , {field: 'number', align: 'center', title: '库存'}
-                , {field: 'dangernum', align: 'center', title: '预警库存'}
-                , {field: 'description', align: 'center', title: '描述'}
-                , {
-                    field: 'available', align: 'center', title: '是否有效', templet: function (d) {
-                        return d.available == 1 ? '<font color=green>有效</font>' : '<font color=red>无效</font>'
-                    }
-                }
-                , {fixed: 'right', align: 'center', title: '操作', toolbar: '#rightBar', width: 200}
+                {type: 'checkbox'}
+                , {field: 'id', align: 'center', title: '进货ID'}
+                , {field: 'goodsname', align: 'center', title: '商品名称'}
+                , {field: 'providername',  align: 'center', title: '供应商名称'}
+                , {field: 'size', align: 'center', title: '商品规格'}
+                , {field: 'inporttime', width: 200,align: 'center', title: '进货时间'}
+                , {field: 'number', align: 'center', title: '进货数据'}
+                , {field: 'inportprice', align: 'center', title: '进货价格'}
+                , {field: 'paytype', align: 'center', title: '支持类型'}
+                , {field: 'operateperson', align: 'center', title: '操作人'}
+                , {field: 'remark', align: 'center', title: '进货描述'}
+                , {fixed: 'right', align: 'center', title: '操作', toolbar: '#rightBar'}
             ] ]
             , page: true
             , toolbar: '#topBar'
@@ -218,14 +232,13 @@
         $("#doSearch").click(function () {
             var param = $("#searchFrm").serialize();
             tableInit.reload({url: '/inport/loadAllInport?' + param});
-            $("#searchFrm")[0].reset();
         });
 
         //监听表头工具栏事件
         table.on('toolbar(inportGrid)', function (obj) {
             switch (obj.event) {
                 case 'add':
-                    layer.msg("添加");
+                    //layer.msg("添加");
                     toAddInport();
                     break;
                 case 'batchDelete':
@@ -240,14 +253,10 @@
         table.on('tool(inportGrid)', function (obj) {
             var data = obj.data; //获得当前行数据
             switch (obj.event) {
-                case 'update':
-                    toUpdateInport(data);
-                    break;
+
                 case 'delete':
                     layer.confirm('确定删除此进货单？', {icon: 3, title: '提示信息'}, function (index) {
-                        $.post("/inport/deleteInport", {
-                            id: data.id  //将需要删除的nId作为参数传入
-                        }, function (data) {
+                        $.post("/inport/deleteInport",data, function (data) {
                             layer.msg(data.msg);
                             //删除成功判断当前页是否有数据
                             var htmlStr = $(".layui-laypage-count").html();
@@ -280,7 +289,7 @@
                 title: '添加进货单',
                 content: $("#addAndUpdateInport"),  //type=1时使用
                 skin: 'layui-layer-molv',//设置皮肤
-                area: ['800px', '550px'],//设置宽高
+                area: ['700px', '450px'],//设置宽高
                 shade: 0.5,//设置遮罩的透明度
                 shadeClose: true,//设置点击遮罩是否关闭弹出层
                 maxmin: true, //是否显示最大化和最小化的按钮  该参数值对type:1和type:2有效
@@ -294,26 +303,7 @@
         }
 
         //修改进货单
-        function toUpdateInport(data) {
-            url = '/inport/updateInport';
-            index = layer.open({
-                type: 1,
-                title: '修改进货单',
-                content: $("#addAndUpdateInport"),  //type=1时使用
-                skin: 'layui-layer-molv',//设置皮肤
-                area: ['800px', '500px'],//设置宽高
-                shade: 0.5,//设置遮罩的透明度
-                shadeClose: true,//设置点击遮罩是否关闭弹出层
-                maxmin: true, //是否显示最大化和最小化的按钮  该参数值对type:1和type:2有效
-                success: function () {
-                    form.val('dataFrm', data);
-                    $("#providerid").val(data.providerid);
-                    $("#showimg").attr("src","/file/downloadFile?inportimg="+data.inportimg);
-                    form.render("select");
 
-                }
-            });
-        }
 
         //查看
 

@@ -1,7 +1,10 @@
 package com.sxt.bus.service;
 
+import com.sxt.bus.domain.Goods;
 import com.sxt.bus.vo.GoodsVo;
 import com.sxt.sys.utils.DataView;
+
+import java.util.List;
 
 /**
  * @author WanMing
@@ -35,5 +38,10 @@ public interface GoodsService {
      */
     void deleteGoods(Integer id);
 
-
+    /**
+     * 根据供应商id查询
+     * @param goodsVo
+     * @return
+     */
+    List<GoodsVo> queryAllGoodsByProviderId(GoodsVo goodsVo);
 }

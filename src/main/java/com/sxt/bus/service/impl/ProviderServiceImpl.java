@@ -2,9 +2,11 @@ package com.sxt.bus.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sxt.bus.domain.Goods;
 import com.sxt.bus.domain.Provider;
 import com.sxt.bus.mapper.ProviderMapper;
 import com.sxt.bus.service.ProviderService;
+import com.sxt.bus.vo.GoodsVo;
 import com.sxt.bus.vo.ProviderVo;
 import com.sxt.sys.constants.SYSConstants;
 import com.sxt.sys.utils.DataView;
@@ -22,6 +24,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Autowired
     private ProviderMapper providerMapper;
+
     /**
      * 模糊加分页
      *
@@ -30,18 +33,18 @@ public class ProviderServiceImpl implements ProviderService {
      */
     @Override
     public DataView queryAllProvider(ProviderVo providerVo) {
-        Page<Object> page = PageHelper.startPage(providerVo.getPage(),providerVo.getLimit());
+        Page<Object> page = PageHelper.startPage(providerVo.getPage(), providerVo.getLimit());
         List<Provider> providers = this.providerMapper.queryAllProvider(providerVo);
 
         //判断该页是否有数据
-        if(page.getTotal()!=0 && page.size()==0){
-            providerVo.setPage(providerVo.getPage()-1);
-            Page<Object> page2 = PageHelper.startPage(providerVo.getPage(),providerVo.getLimit());
+        if (page.getTotal() != 0 && page.size() == 0) {
+            providerVo.setPage(providerVo.getPage() - 1);
+            Page<Object> page2 = PageHelper.startPage(providerVo.getPage(), providerVo.getLimit());
             List<Provider> providers2 = this.providerMapper.queryAllProvider(providerVo);
-            return new DataView(SYSConstants.STATUS_CODE,SYSConstants.STATUS_MSG,page2.getTotal(),providers2);
+            return new DataView(SYSConstants.STATUS_CODE, SYSConstants.STATUS_MSG, page2.getTotal(), providers2);
         }
 
-        return new DataView(SYSConstants.STATUS_CODE,SYSConstants.STATUS_MSG,page.getTotal(),providers);
+        return new DataView(SYSConstants.STATUS_CODE, SYSConstants.STATUS_MSG, page.getTotal(), providers);
     }
 
     /**
@@ -85,4 +88,7 @@ public class ProviderServiceImpl implements ProviderService {
 
         return this.providerMapper.queryAllProvider(provider);
     }
+
 }
+
+

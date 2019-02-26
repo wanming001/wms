@@ -81,4 +81,15 @@ public class GoodsServiceImpl implements GoodsService {
 
         this.goodsMapper.deleteByPrimaryKey(id);
     }
+
+    /**
+     * 根据供应商id查询
+     *
+     * @param goodsVo
+     * @return
+     */
+    @Override
+    public List<GoodsVo> queryAllGoodsByProviderId(GoodsVo goodsVo) {
+        return this.goodsMapper.queryAllGoods(goodsVo);
+    }
 }

@@ -1,5 +1,6 @@
 package com.sxt.bus.controller;
 
+import com.sxt.bus.domain.Goods;
 import com.sxt.bus.domain.Provider;
 import com.sxt.bus.service.GoodsService;
 import com.sxt.bus.service.ProviderService;
@@ -11,6 +12,7 @@ import com.sxt.sys.utils.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -117,5 +119,16 @@ public class GoodsController {
 
         return nodes;
 
+    }
+
+    /**
+     * 加载供应商下的商品集合
+     * @param goodsVo
+     * @return
+     */
+    @RequestMapping("loadAllGoodsByProviderId")
+    public List<GoodsVo> loadAllGoodsByProviderId(GoodsVo goodsVo){
+        goodsVo.setAvailable(SYSConstants.SYS_AVAILABLE_TRUE);
+        return this.goodsService.queryAllGoodsByProviderId(goodsVo);
     }
 }

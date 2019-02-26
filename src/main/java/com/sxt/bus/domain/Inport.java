@@ -1,12 +1,14 @@
 package com.sxt.bus.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class Inport {
     private Integer id;
 
     private String paytype;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date inporttime;
 
     private String operateperson;
