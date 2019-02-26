@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>菜单管理树</title>
+    <link rel="stylesheet" href="/resources/zTree/css/metroStyle/metroStyle.css" type="text/css">
+    <script type="text/javascript" src="/resources/zTree/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/resources/zTree/js/jquery.ztree.core.js"></script>
+
+</head>
+<body>
+<div id="treeMenus" class="ztree"></div>
+<script>
+    //点击事件刷新菜单列表数据
+    function zTreeOnClick(event,treeId,treeNode) {
+        //同步数据到右侧页面刷新数据表格的接口
+        window.parent.main.reloadTable(treeNode.id);
+    }
+
+    //设置zTree树的属性
+    var setting = {
+        data:{
+            simpleData:{
+                enable:true
+            }
+        },
+        callback:{
+            //设置点击事件
+            onClick:zTreeOnClick
+        }
+    };
+    //初始化树函数
+    function initMenuTree() {
+        $.post("/menu/loadMenuManagerLeftTreeJson",function (zNodes) {
+            $.fn.zTree.init($("#treeMenus"),setting,zNodes);
+        });
+    }
+
+    //初始化
+    initMenuTree();
+    
+
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>部门管理树</title>
+    <link rel="stylesheet" href="/resources/zTree/css/metroStyle/metroStyle.css" type="text/css">
+    <script type="text/javascript" src="/resources/zTree/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/resources/zTree/js/jquery.ztree.core.js"></script>
+
+</head>
+<body>
+<div id="treeDepts" class="ztree"></div>
+<script>
+    //点击事件刷新部门列表数据
+    function zTreeOnClick(event, treeId, treeNode) {
+        window.parent.main.reloadTable(treeNode.id);
+    };
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: zTreeOnClick
+        }
+    };
+    function initDeptTree(){
+        $.post("/dept/loadDeptManagerLeftTreeJson",function(zNodes){
+            $.fn.zTree.init($("#treeDepts"), setting, zNodes);
+        });
+    }
+    //初始化树
+    initDeptTree();
+</script>
+</body>
+</html>
